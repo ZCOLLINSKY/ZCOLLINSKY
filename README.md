@@ -41,7 +41,9 @@ Patterns that are live in the database today, with the SQL published in [supabas
 
 ## Stack
 
-Postgres on Supabase, Vercel serverless functions, Stripe (invoices, subscriptions, webhooks), Anthropic and OpenAI (vision, verification, generation), Resend, Twilio, Vercel Blob, Sentry, Playwright, GitHub Actions. Python for the ops and content tooling that runs the rest of the business.
+Postgres on Supabase (RLS forced, RPCs, triggers; no Supabase Auth, Edge Functions, or Storage in this build), Vercel serverless functions, Stripe (invoices, subscriptions, webhooks), Anthropic and OpenAI (vision, verification, generation), Resend, Twilio, Vercel Blob, Sentry, Playwright, GitHub Actions.
+
+The rest of the business runs on Python I wrote: a back-office assistant with a Telegram bot, a Notion CRM worker, and schedulers on a VPS I manage over Tailscale and tmux, plus a local LinkedIn publishing studio that posts through the official API.
 
 ## Elsewhere
 
