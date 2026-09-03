@@ -13,13 +13,13 @@ I ship it solo. Fleets of Claude Code and Codex agents do the typing. A CI gate 
 The SQL is published in [supabase-production-patterns](https://github.com/ZCOLLINSKY/supabase-production-patterns). The private repo tracks application to production per file in a ledger, and where a file is authored but not yet applied, its header says so.
 
 - **Durable rate limiting in Postgres.** A `charge_ai_usage` RPC does an atomic upsert-and-check per account per day. Serverless functions have no shared memory, so the ledger lives in the database, and production fails closed when the ledger is unreachable.
-- **Idempotent render attempts.** A compare-and-swap attempt store keyed by a SHA-256 of tenant plus attempt id, carrying a separate fingerprint hash so a retry that quietly changed its request is refused instead of handed the earlier artifact. Seven-day retention purged by a `SECURITY DEFINER` function. The render lane fails closed when that store is unreachable, which is how I found the ambiguous-column bug that had it raising 42702 and returning 503 for every night render.
+- **Idempotent render attempts.** A compare-and-swap attempt store keyed by a SHA-256 of tenant plus attempt id, carrying a separate fingerprint hash so a retry that quietly changed its request is refused instead of handed the earlier artifact. Seven-day retention purged by a `SECURITY DEFINER` function. The render lane fails closed when that store is unreachable, which is how I found the ambiguous-column bug that has it raising 42702 and returning 503 for every night render. The fix is written and still unapplied; applying and verifying it is an open go-live gate.
 - **Webhook ownership.** Stripe events are claimed with a bounded lease before any side effect runs. Paid-invoice effects sit in a row-embedded outbox written by the same statement that marks the invoice paid, with per-channel completion, so a crash between "paid" and "receipt sent" is recoverable, not lost.
 - **Append-only receipts.** Render and presentation receipts are hash-bound rows with a mutation-rejecting trigger. No image bytes, no client identity, only provenance, for every AI render a homeowner sees.
 - **One-way state.** Onboarding is a `CHECK`-constrained state machine advanced only by server-owned events. A proposal's source job id is immutable after first binding, enforced by trigger, so a stale callback cannot rewrite the wrong client document.
 - **Deny by default, and proven.** RLS enabled and forced, browser roles revoked at the grant layer too. A probe on 2026-09-03 with the public anon key against six PII tables returned 401, with row security enabled on 37 of 37 public tables. An event trigger extends the same lockdown to any table nobody has written yet.
 - **One outbound gate.** Halt rows, send caps, dedupe keys, and actor attribution share one ledger. Before it existed, the only way to stop an agent emailing homeowners at 2am was pulling the deployment or the email key. The global halt is an env flag so it works when the database does not.
-- **Backups in two layers, and the runbook says which one is proven.** A daily logical export to a private store, ordered and count-checked per table, failing closed on drift, with a dead-man's-switch ping so a cron that stops running pages me instead of going quiet. The runbook is explicit that a logical export is not a single MVCC point in time and that a restore rehearsal is still on my list.
+- **Backups in two layers, and the runbook says which one is proven.** A daily logical export to a private store, ordered and count-checked per table, failing closed on drift, with a dead-man's-switch ping so a cron that stops running pages me instead of going quiet. The runbook is explicit that a logical export is not a single MVCC point in time, that PITR is not on yet, and that no restore has been rehearsed.
 
 ## How I work
 
@@ -39,7 +39,7 @@ Counts from the private repository at the current production release. Each one i
 | Commits, first commit to current production release | 2,785 in 98 days |
 | Serverless API routes | 46 |
 | SQL migration files / distinct Postgres functions | 63 / 43 |
-| Playwright spec files (regression 340, e2e 113, mobile 9, a11y 3, adversarial 2, visual 1) | 470 |
+| Playwright spec files (regression 340, e2e 113, mobile 9, a11y 3, adversarial 2, visual 1, integration 1, seed 1) | 470 |
 | Self-hosted CI runners | 4 |
 
 ## Stack
