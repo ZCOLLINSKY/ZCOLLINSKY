@@ -19,7 +19,7 @@ The SQL is published in [supabase-production-patterns](https://github.com/ZCOLLI
 - **One-way state.** Onboarding is a `CHECK`-constrained state machine advanced only by server-owned events. A proposal's source job id is immutable after first binding, enforced by trigger, so a stale callback cannot rewrite the wrong client document.
 - **Deny by default, and proven.** RLS enabled and forced, browser roles revoked at the grant layer too. A probe on 2026-09-03 with the public anon key against six PII tables returned 401, with row security enabled on 37 of 37 public tables. An event trigger extends the same lockdown to any table nobody has written yet.
 - **One outbound gate.** Halt rows, send caps, dedupe keys, and actor attribution share one ledger. Before it existed, the only way to stop an agent emailing homeowners at 2am was pulling the deployment or the email key. The global halt is an env flag so it works when the database does not.
-- **Backups in two layers, and the runbook says which one is proven.** A daily logical export to a private store, ordered and count-checked per table, failing closed on drift, with a dead-man's-switch ping so a cron that stops running pages me instead of going quiet. The runbook is explicit that a logical export is not a single MVCC point in time, that PITR is not on yet, and that no restore has been rehearsed.
+- **Backups in two layers, and the runbook says which one is proven.** A daily logical export to a private store, ordered and count-checked per table, failing closed on drift, wired for a dead-man's-switch ping so a cron that stops running can page me instead of going quiet. The runbook is explicit that a logical export is not a single MVCC point in time, that PITR is not on yet, and that no restore has been rehearsed.
 
 ## How I work
 
@@ -27,7 +27,7 @@ The SQL is published in [supabase-production-patterns](https://github.com/ZCOLLI
 - A release is not live until the merged SHA, a deployment receipt, `/api/release-info` reporting that exact SHA, and a live smoke suite all agree.
 - Tests have to mean what they say. The shared fixture fails any spec that leaves a real API call unmocked, so a green run cannot certify a stub.
 - Runbooks exist for the bad nights: incident rollback, secret rotation, and a production migration go/no-go list.
-- A hardening audit this week shipped as three gated PRs in two days: cohort and sign-in, then the money path and render economics, then observability, the migration ledger, onboarding edges, and runbooks.
+- A hardening audit this week shipped as three gated PRs in one day: cohort and sign-in, then the money path and render economics, then observability, the migration ledger, onboarding edges, and runbooks.
 - The architecture and decision records are public in [lightdeck-architecture](https://github.com/ZCOLLINSKY/lightdeck-architecture).
 
 ## Numbers
