@@ -6,7 +6,7 @@ Founder-operator. I run a lighting installation company in Lexington, Kentucky, 
 
 **LightDeck** is a field, proposal, and invoicing workspace for landscape lighting contractors. It started as the tool I needed to stop spending my evenings on proposals, then became the product. Postgres on Supabase is the system of record. The architecture record draws one line: a model may propose copy, classifications, placement suggestions, or pixels, and it never owns money, identity, legal terms, or project state. LightDeck compiles the deliverable and records which facts and design produced it.
 
-I ship it solo. Fleets of Claude Code and Codex agents do the typing. A CI gate on runners I own does the judging. Audit waves re-run the gate on the integrated head and trace every failure to a root cause before anything merges.
+I ship it solo. I decide what gets built, what the rules are, and what goes live. Claude Code and Codex write most of the code; a CI gate on runners I set up decides what merges, and every failure gets traced to a root cause before anything ships.
 
 ## Postgres patterns from the production schema
 
@@ -23,7 +23,7 @@ The SQL is published in [supabase-production-patterns](https://github.com/ZCOLLI
 
 ## How I work
 
-- Agent fleets do the typing. A gate on four self-hosted runners does the judging on every PR to the production branch: contract tests, money-path tests, desktop visual baselines at zero retries, and a repository health check.
+- I set the requirements and the rules for what is allowed to ship. Claude Code and Codex write most of the code. A gate on four self-hosted runners judges every PR to the production branch: contract tests, money-path tests, desktop visual baselines at zero retries, and a repository health check.
 - A release is not live until the merged SHA, a deployment receipt, `/api/release-info` reporting that exact SHA, and a live smoke suite all agree.
 - Tests have to mean what they say. The shared fixture fails any spec that leaves a real API call unmocked, so a green run cannot certify a stub.
 - Runbooks exist for the bad nights: incident rollback, secret rotation, and a production migration go/no-go list.
