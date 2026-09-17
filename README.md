@@ -1,60 +1,42 @@
 # Zach Collins
 
-Founder-operator. I run a lighting installation company in Lexington, Kentucky, and I built the software that runs it: LightDeck, a vertical SaaS on Supabase Postgres, Vercel, and Stripe. It runs in production as a closed free beta, and it is the system my own company invoices real jobs through.
+**Founder & developer of [LightDeck](https://www.lightdeck.tech/) · Owner of [Evening Glow](https://www.eveningglowllc.com/) · U.S. Army veteran**
 
-## What I built
+I build software for landscape-lighting contractors, informed by running a lighting business in Central Kentucky. My work connects JavaScript applications, serverless APIs, Postgres, and AI workflows with explicit review boundaries.
 
-**LightDeck** is a field, proposal, and invoicing workspace for landscape lighting contractors. It started as the tool I needed to stop spending my evenings on proposals, then became the product. Postgres on Supabase is the system of record. The architecture record draws one line: a model may propose copy, classifications, placement suggestions, or pixels, and it never owns money, identity, legal terms, or project state. LightDeck compiles the deliverable and records which facts and design produced it.
+## LightDeck
 
-I ship it solo. I decide what gets built, what the rules are, and what goes live. Claude Code and Codex write most of the code; a CI gate on runners I set up decides what merges, and every failure gets traced to a root cause before anything ships.
+LightDeck brings property photos, fixture plans, contractor-set pricing, and proposal preparation into one workflow. I work across product requirements, application logic, database design, automated testing, and release verification.
 
-## Postgres patterns from the production schema
+**Current product scope, September 2026:** a closed, free, founder-supported beta for field capture and proposal, PDF, and invoice drafts. Client publishing, messages, signatures, payments, and generated night concepts are not enabled for beta walkthroughs.
 
-The SQL is published in [supabase-production-patterns](https://github.com/ZCOLLINSKY/supabase-production-patterns). The private repo tracks application to production per file in a ledger, and where a file is authored but not yet applied, its header says so.
+[Product](https://www.lightdeck.tech/) · [Founder site](https://zachcollins.me/) · [Architecture](https://github.com/ZCOLLINSKY/lightdeck-architecture) · [Postgres patterns](https://github.com/ZCOLLINSKY/supabase-production-patterns)
 
-- **Durable rate limiting in Postgres.** A `charge_ai_usage` RPC does an atomic upsert-and-check per account per day. Serverless functions have no shared memory, so the ledger lives in the database, and production fails closed when the ledger is unreachable.
-- **Idempotent render attempts.** A compare-and-swap attempt store keyed by a SHA-256 of tenant plus attempt id, carrying a separate fingerprint hash so a retry that quietly changed its request is refused instead of handed the earlier artifact. Seven-day retention purged by a `SECURITY DEFINER` function. The render lane fails closed when that store is unreachable, which is how I found the ambiguous-column bug that has it raising 42702 and returning 503 for every night render. The fix is written and still unapplied; applying and verifying it is an open go-live gate.
-- **Webhook ownership.** Stripe events are claimed with a bounded lease before any side effect runs. Paid-invoice effects sit in a row-embedded outbox written by the same statement that marks the invoice paid, with per-channel completion, so a crash between "paid" and "receipt sent" is recoverable, not lost.
-- **Append-only receipts.** Render and presentation receipts are hash-bound rows with a mutation-rejecting trigger. No image bytes, no client identity, only provenance, for every AI render a homeowner sees.
-- **One-way state.** Onboarding is a `CHECK`-constrained state machine advanced only by server-owned events. A proposal's source job id is immutable after first binding, enforced by trigger, so a stale callback cannot rewrite the wrong client document.
-- **Deny by default, and proven.** RLS enabled and forced, browser roles revoked at the grant layer too. A probe on 2026-09-03 with the public anon key against six PII tables returned 401, with row security enabled on 37 of 37 public tables. An event trigger extends the same lockdown to any table nobody has written yet.
-- **One outbound gate.** Halt rows, send caps, dedupe keys, and actor attribution share one ledger. Before it existed, the only way to stop an agent emailing homeowners at 2am was pulling the deployment or the email key. The global halt is an env flag so it works when the database does not.
-- **Backups in two layers, and the runbook says which one is proven.** A daily logical export to a private store, ordered and count-checked per table, failing closed on drift, wired for a dead-man's-switch ping so a cron that stops running can page me instead of going quiet. The runbook is explicit that a logical export is not a single MVCC point in time, that PITR is not on yet, and that no restore has been rehearsed.
+## Engineering work you can inspect
 
-## How I work
+| Problem | Approach | Public evidence |
+| --- | --- | --- |
+| Serverless instances need a shared usage limit | An atomic Postgres ledger records usage and checks the account limit | [Rate-limit RPC](https://github.com/ZCOLLINSKY/supabase-production-patterns/blob/main/sql/2026-07-16-durable-rate-limit-ledger.sql) |
+| Webhooks can arrive concurrently or be retried | Bounded event claims and durable completion state | [Webhook claims](https://github.com/ZCOLLINSKY/supabase-production-patterns/blob/main/sql/2026-07-16-stripe-event-claims.sql) |
+| A crash can happen after state is committed | An outbox records pending effects alongside the state change | [Outbox pattern](https://github.com/ZCOLLINSKY/supabase-production-patterns/blob/main/sql/2026-07-15-invoice-effect-outbox.sql) |
+| AI output must not become business truth by accident | Structured source facts, constrained model proposals, validation, and human review | [AI architecture decisions](https://github.com/ZCOLLINSKY/lightdeck-architecture/blob/main/docs/ai-runtime-architecture.md) |
+| Browser roles should not directly access application tables | Explicit grants, row-level security, and database constraints | [Database access boundaries](https://github.com/ZCOLLINSKY/supabase-production-patterns/blob/main/sql/2026-07-16-public-schema-lockdown.sql) |
 
-- I set the requirements and the rules for what is allowed to ship. Claude Code and Codex write most of the code. A gate on four self-hosted runners judges every PR to the production branch: contract tests, money-path tests, desktop visual baselines at zero retries, and a repository health check.
-- A release is not live until the merged SHA, a deployment receipt, `/api/release-info` reporting that exact SHA, and a live smoke suite all agree.
-- Tests have to mean what they say. The shared fixture fails any spec that leaves a real API call unmocked, so a green run cannot certify a stub.
-- Runbooks exist for the bad nights: incident rollback, secret rotation, and a production migration go/no-go list.
-- A hardening audit this week shipped as three gated PRs in one day: cohort and sign-in, then the money path and render economics, then observability, the migration ledger, onboarding edges, and runbooks.
-- The architecture and decision records are public in [lightdeck-architecture](https://github.com/ZCOLLINSKY/lightdeck-architecture).
+These public repositories are dated engineering snapshots published September 3, 2026. Their source headers and notes distinguish implemented patterns, design work, and unverified deployment state. They are not a claim that every described capability is enabled in the current beta.
 
-## Numbers
+## Stack and working approach
 
-Counts from the private repository at the current production release. Each one is a single command against the tree.
+- **Application:** JavaScript, browser workflows, Vercel serverless functions.
+- **Data:** Postgres on Supabase, SQL functions, constraints, indexes, and tenant-scoped data access.
+- **Quality:** Playwright, API and contract tests, GitHub Actions, and release verification.
+- **Applied AI:** structured context, model-output validation, human review, usage limits, and provenance.
 
-| Metric | Value |
-|---|---|
-| Commits, first commit to current production release | 2,785 in 98 days |
-| Serverless API routes | 46 |
-| SQL migration files / distinct Postgres functions | 63 / 43 |
-| Playwright spec files (regression 340, e2e 113, mobile 9, a11y 3, adversarial 2, visual 1, integration 1, seed 1) | 470 |
-| Self-hosted CI runners | 4 |
+I use AI development tools throughout the build process and take responsibility for product decisions, architecture, review, and validation. I’m particularly interested in reliable AI workflows and vertical SaaS grounded in real operational problems.
 
-## Stack
+Running Evening Glow keeps me close to those problems: site visits, design decisions, pricing, installation, and customer handoffs. My background also includes Army service, logistics, and operations.
 
-- Postgres on Supabase: RLS forced, RPCs, row and event triggers. No Supabase Auth, Edge Functions, or Storage in this build.
-- Vercel serverless functions and cron, Vercel Blob for images and private backups.
-- Stripe invoices, subscriptions, and webhooks.
-- Anthropic and OpenAI for vision, verification, and generation, behind the ownership boundary above.
-- Resend, Twilio, Google Maps, Sentry, Telegram alerts, Healthchecks.
-- Playwright and GitHub Actions on self-hosted macOS runners.
+## Connect
 
-Outside this repo, Python runs the rest of the business: a back-office assistant with a Telegram bot, a Notion CRM worker, and schedulers on a VPS I manage over Tailscale and tmux, plus a local LinkedIn studio that publishes through the official API.
+[LinkedIn](https://www.linkedin.com/in/zachcollins-ky/) · [zachcollins.me](https://zachcollins.me/) · [LightDeck](https://www.lightdeck.tech/)
 
-## Elsewhere
-
-[LightDeck](https://www.lightdeck.tech) · [Evening Glow](https://www.eveningglowllc.com) · [zachcollins.me](https://zachcollins.me) · [LinkedIn](https://www.linkedin.com/in/zachcollins-ky) · zc@eveningglowllc.com
-
-Army veteran, University of Kentucky student, Lexington KY.
+Lexington, Kentucky. Open to conversations about vertical SaaS, applied AI, and software for service businesses.
