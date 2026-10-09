@@ -2,13 +2,13 @@
 
 **Founder & developer of [LightDeck](https://www.lightdeck.tech/) · Owner of [Evening Glow](https://www.eveningglowllc.com/) · U.S. Army veteran**
 
-I build software for landscape-lighting contractors, informed by running a lighting business in Central Kentucky. My work connects JavaScript applications, serverless APIs, Postgres, and AI workflows with explicit review boundaries.
+I run Evening Glow, an outdoor-lighting business in Central Kentucky, and I’m building LightDeck around the planning, pricing, and proposal work I do in the field. I’ve used LightDeck on real projects and to help win paid lighting jobs.
 
 ## LightDeck
 
 LightDeck brings property photos, fixture plans, contractor-set pricing, and proposal preparation into one workflow. I work across product requirements, application logic, database design, automated testing, and release verification.
 
-**Current product scope, September 2026:** a closed, free, founder-supported beta for field capture and proposal, PDF, and invoice drafts. Client publishing, messages, signatures, payments, and generated night concepts are not enabled for beta walkthroughs.
+**Last documented beta scope, September 2026:** a closed, free, founder-supported beta for field capture and proposal, PDF, and invoice drafts. Client publishing, messages, signatures, payments, and generated night concepts were not enabled in that documented beta walkthrough.
 
 [Product](https://www.lightdeck.tech/) · [Founder site](https://zachcollins.me/) · [Architecture](https://github.com/ZCOLLINSKY/lightdeck-architecture) · [Postgres patterns](https://github.com/ZCOLLINSKY/supabase-production-patterns)
 
@@ -37,6 +37,6 @@ Running Evening Glow keeps me close to those problems: site visits, design decis
 
 ## Connect
 
-[LinkedIn](https://www.linkedin.com/in/zachcollins-ky/) · [zachcollins.me](https://zachcollins.me/) · [LightDeck](https://www.lightdeck.tech/)
+[LinkedIn](https://www.linkedin.com/in/zachcollins-ky/) · [X](https://x.com/EveningGlow859) · [Hugging Face](https://huggingface.co/zachcollins89) · [Microsoft Learn](https://learn.microsoft.com/en-us/users/zachcollinsky/) · [zachcollins.me](https://zachcollins.me/) · [LightDeck](https://www.lightdeck.tech/) · [Email](mailto:zc@eveningglowllc.com)
 
 Lexington, Kentucky. Open to conversations about vertical SaaS, applied AI, and software for service businesses.
