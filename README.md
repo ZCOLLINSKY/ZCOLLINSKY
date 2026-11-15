@@ -8,7 +8,7 @@ I run Evening Glow, an outdoor-lighting business in Central Kentucky, and I’m 
 
 LightDeck brings property photos, fixture plans, contractor-set pricing, and proposal preparation into one workflow. I work across product requirements, application logic, database design, automated testing, and release verification.
 
-**Last documented beta scope, September 2026:** a closed, free, founder-supported beta for field capture and proposal, PDF, and invoice drafts. Client publishing, messages, signatures, payments, and generated night concepts were not enabled in that documented beta walkthrough.
+LightDeck is in a closed, founder-supported beta covering field capture and proposal, PDF and invoice drafts (scope as of September 2026).
 
 [Product](https://www.lightdeck.tech/) · [Founder site](https://zachcollins.me/) · [Architecture](https://github.com/ZCOLLINSKY/lightdeck-architecture) · [Postgres patterns](https://github.com/ZCOLLINSKY/supabase-production-patterns)
 
@@ -18,6 +18,7 @@ LightDeck brings property photos, fixture plans, contractor-set pricing, and pro
 
 - **It runs on my computer.** A small Node server on 127.0.0.1 and one JSON file. No account, no cloud, no dependencies.
 - **Assistants can't approve for me.** The MCP tools and the HTTP API can raise, update and collect. Only the page I open can approve.
+- **Tested in the open.** 341 tests run on Linux and macOS on every push, and two adversarial review passes before release are [written up with their status](https://github.com/ZCOLLINSKY/switchboard/blob/main/docs/ADVERSARIAL-2026-11-13.md).
 - **MIT licensed.** It works with Claude Code, Claude Desktop and Codex.
 
 [Try it in the browser](https://zachcollins.me/switchboard/) · [Source](https://github.com/ZCOLLINSKY/switchboard) · [Latest release](https://github.com/ZCOLLINSKY/switchboard/releases/latest)
@@ -32,7 +33,7 @@ LightDeck brings property photos, fixture plans, contractor-set pricing, and pro
 | AI output must not become business truth by accident | Structured source facts, constrained model proposals, validation, and human review | [AI architecture decisions](https://github.com/ZCOLLINSKY/lightdeck-architecture/blob/main/docs/ai-runtime-architecture.md) |
 | Browser roles should not directly access application tables | Explicit grants, row-level security, and database constraints | [Database access boundaries](https://github.com/ZCOLLINSKY/supabase-production-patterns/blob/main/sql/2026-07-16-public-schema-lockdown.sql) |
 
-These public repositories are dated engineering snapshots published September 3, 2026. Their source headers and notes distinguish implemented patterns, design work, and unverified deployment state. They are not a claim that every described capability is enabled in the current beta.
+Snapshots published September 3, 2026. Each file's header says whether it is an implemented pattern, design work or not yet verified in deployment.
 
 ## Stack and working approach
 
