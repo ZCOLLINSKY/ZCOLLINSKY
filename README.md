@@ -12,6 +12,16 @@ LightDeck brings property photos, fixture plans, contractor-set pricing, and pro
 
 [Product](https://www.lightdeck.tech/) · [Founder site](https://zachcollins.me/) · [Architecture](https://github.com/ZCOLLINSKY/lightdeck-architecture) · [Postgres patterns](https://github.com/ZCOLLINSKY/supabase-production-patterns)
 
+## Switchboard
+
+[Switchboard](https://github.com/ZCOLLINSKY/switchboard) is an open-source tool I built so my AI assistants and scripts have one place to ask me for things. An assistant raises a request with the draft attached. I approve it, change it or say no, and the assistant does the sending and reports back. I use it for my own work.
+
+- **It runs on my computer.** A small Node server on 127.0.0.1 and one JSON file. No account, no cloud, no dependencies.
+- **Assistants can't approve for me.** The MCP tools and the HTTP API can raise, update and collect. Only the page I open can approve.
+- **MIT licensed.** It works with Claude Code, Claude Desktop and Codex.
+
+[Try it in the browser](https://zachcollins.me/switchboard/) · [Source](https://github.com/ZCOLLINSKY/switchboard) · [Latest release](https://github.com/ZCOLLINSKY/switchboard/releases/latest)
+
 ## Engineering work you can inspect
 
 | Problem | Approach | Public evidence |
